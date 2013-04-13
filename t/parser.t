@@ -12,7 +12,8 @@ print STDERR $Marpa::R2::VERSION, "\n";
 
 my $template = $p->parse("{{name}}");
 print Dumper($template);
-is_deeply($template->[0], ['{{', 'name', '}}' ]);
+my $expected = [ '{{', 'test', '}}' ];
+is_deeply($template->[0], [$expected]);
 
 #my $template = $p->parse("hello {{name}}");
 #is($template->[0], 'hello ');
