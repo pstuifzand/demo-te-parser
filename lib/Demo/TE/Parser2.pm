@@ -1,5 +1,5 @@
 package Demo::TE::Parser2;
-use Marpa::R2 '2.051_008';
+use Marpa::R2 '2.051_009';
 
 sub new {
     my $class = shift;

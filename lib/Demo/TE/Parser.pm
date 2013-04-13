@@ -1,6 +1,6 @@
 package Demo::TE::Parser;
 use 5.10.0;
-use Marpa::R2 '2.051_008';
+use Marpa::R2 '2.051_009';
 use Demo::TE::Parser2;
 use Data::Dumper;
 
