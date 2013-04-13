@@ -8,6 +8,8 @@ my $p = Demo::TE::Parser->new;
 #print Dumper($template);
 #is($template->[0], 'hello');
 
+print STDERR $Marpa::R2::VERSION, "\n";
+
 my $template = $p->parse("{{name}}");
 print Dumper($template);
 is_deeply($template->[0], ['{{', 'name', '}}' ]);

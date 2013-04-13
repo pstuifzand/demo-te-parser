@@ -14,14 +14,14 @@ sub new {
 
 template      ::= parts*
 
-parts         ::= literal               action => ::first
-                | template_bits         action => ::first
+parts         ::= literal
+                | template_bits
 
 template_bits ::= template_start expression template_end
 
-literal       ::= literal_text          action => ::first
+literal       ::= literal_text
 
-:lexeme ~ <template_start> pause => before
+:lexeme ~ <template_start> pause => after
 
 template_start ~ '{{'
 template_end   ~ '}}'
@@ -52,21 +52,24 @@ sub parse {
     );
 
     my $re = Marpa::R2::Scanless::R->new({ %options, grammar => $self->{grammar} });
-    $re->read(\$input);
+    my $pos = $re->read(\$input);
+    die if $pos < 0;
 
     my ($start, $length) = $re->pause_span;
 
-    if (defined $start && defined $length && $start+$length < length $input) {
+    if ($pos < length $input) {
         my $p2 = Demo::TE::Parser2->new;
-        my $re2 = $p2->recognizer($input, $start+$length, -1);
-        my $end = $re2->read(\$input, $start+$length, -1);
+        my $re2 = $p2->recognizer($input, $pos, -1);
+        my $end = $re2->read(\$input, $pos, -1);
         my $tmpval = ${$re2->value};
         my ($is, $il) = $re2->pause_span;
         say "$is,$il";
-        #$re->lexeme_read('expression', $is, $il, 'test');
-        #if ($is+$il < length $input) {
-            $re->resume($is,-1);
-            #}
+        if (not $re->lexeme_read('expression', $pos, $end-$pos, 'test')) {
+	    die $re->show_progress;
+	}
+        if ($end < length $input) {
+            $re->resume($end, -1);
+	}
     }
     my $v = $re->value;
     return $$v;
