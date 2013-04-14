@@ -27,10 +27,10 @@ GRAMMAR
 }
 
 sub recognizer {
-    my ($self, $input, $start, $length) = @_;
+    my ($self) = @_;
     my %options = (
-        trace_values => 1,
-        trace_terminals => 1,
+        #trace_values => 1,
+        #trace_terminals => 1,
     );
     my $re = Marpa::R2::Scanless::R->new({ %options, grammar => $self->{grammar} });
     return $re;

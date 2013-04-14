@@ -55,21 +55,17 @@ sub parse {
     my $pos = $re->read(\$input);
     die if $pos < 0;
 
-    my ($start, $length) = $re->pause_span;
-
     if ($pos < length $input) {
         my $p2 = Demo::TE::Parser2->new;
-        my $re2 = $p2->recognizer($input, $pos, -1);
+        my $re2 = $p2->recognizer;
         my $end = $re2->read(\$input, $pos, -1);
         my $tmpval = ${$re2->value};
-        my ($is, $il) = $re2->pause_span;
-        say "$is,$il";
         if (not $re->lexeme_read('expression', $pos, $end-$pos, 'test')) {
-	    die $re->show_progress;
-	}
+            die $re->show_progress;
+        }
         if ($end < length $input) {
             $re->resume($end, -1);
-	}
+        }
     }
     my $v = $re->value;
     return $$v;
