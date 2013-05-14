@@ -9,15 +9,17 @@ sub new {
         source => \<<'GRAMMAR',
 :start        ::= tag
 
-tag           ::= expression template_end
+tag           ::= expression (template_end)     action => ::first
 
-:lexeme ~ template_end pause => before
-template_end ~ '}}'
+:lexeme        ~ template_end  pause => before
 
-expression     ~ [\w]+
+template_end   ~ '}}'
 
+expression    ::= identifier
+                | identifier ('.') expression
+
+identifier      ~ [\w]+
 GRAMMAR
-
     });
 
     my $self = {
