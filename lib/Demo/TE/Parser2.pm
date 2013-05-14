@@ -9,11 +9,12 @@ sub new {
         source => \<<'GRAMMAR',
 :start        ::= tag
 
-tag           ::= expression (template_end)     action => ::first
+tag           ::= expression     action => ::first
 
-:lexeme        ~ template_end  pause => before
+event expression = completed expression
 
-template_end   ~ '}}'
+#template_end   ~ '}}'
+#template_start ~ '{{'
 
 expression    ::= identifier
                 | identifier ('.') expression

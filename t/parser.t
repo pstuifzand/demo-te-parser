@@ -12,29 +12,27 @@ my $p = Demo::TE::Parser->new;
 
 # just a tag
 {
-    my $template = $p->parse("{{aaaaaaaaaa}}");
-    my $expected = [ '{{', ['aaaaaaaaaa' ], '}}' ];
+    my $template = $p->parse("{{aaa}}");
+    my $expected = [ ['aaa'] ];
     is_deeply($template->[0], $expected);
 }
 
 # just a tag
 {
     my $template = $p->parse("{{page.title}}");
-    my $expected = [ '{{', [ 'page', [ 'title' ] ], '}}' ];
+    my $expected = [ [ 'page', [ 'title' ] ] ];
     is_deeply($template->[0], $expected);
 }
-
-done_testing();
-exit;
 
 # literal followed by tag
 {
     my $template = $p->parse("hello {{name}}");
-    print STDERR Dumper($template);
     is_deeply($template->[0], [ 'hello ' ]);
-    is_deeply($template->[1], [ '{{', 'name', '}}' ]);
+    is_deeply($template->[1], [ ['name'] ]);
 }
 
+done_testing();
+exit;
 
 # literal with partial start marker
 {

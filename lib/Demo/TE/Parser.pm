@@ -27,12 +27,9 @@ part          ::= template_bits       action => ::first
                 | literal             action => ::first
 
 literal       ::= literal_text                            bless => literal
-template_bits ::= tt_start expression tt_end  bless => template
+template_bits ::= (template_start) expression (template_end)          bless => template
 
-tt_start      ::= template_start             action => ::first
-tt_end        ::= template_end               action => ::first
-
-event tt_start = completed tt_start
+:lexeme         ~ template_start            pause => after
 
 template_start ~ '{{'
 template_end   ~ '}}'
@@ -78,10 +75,16 @@ sub parse {
     while ($pos < length $input) {
         my $re2 = $p2->recognizer;
         my $prev_pos=$pos;
-        $pos = $re2->read(\$input, $pos);
-        $re2->lexeme_read('template_end', $pos, 2, '}}');
+        my $end = index $input, "}}", $pos;
+        my $l2 = $end;
+        $pos = $re2->read(\$input, $pos, $end-$pos);
+        while ($pos < $l2) {
+            $pos = $re2->resume($pos, $l2-$pos);
+        }
         my $v = ${$re2->value};
         $re->lexeme_read('expression', $prev_pos, $pos-$prev_pos, $v);
+        $re->lexeme_read('template_end', $pos, 2);
+        $pos += 2;
         $pos = $re->resume($pos);
     }
 
